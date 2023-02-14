@@ -1,18 +1,59 @@
 import './style.css';
 import { delay } from './utils';
 
+class PopOver {
+  constructor(id) {
+    this.id = id;
+    this.element = document.createElement('div');
+    this.element.className = 'popover';
+  }
+
+  open() {
+    // 1. setup dimmed bg
+    this.createDimmer();
+
+    // 2. append the popup container to the bottom of the body
+    document.body.appendChild(this.element);
+
+    // 3. create a content inside of it
+    const popoverContent = document.createElement('div');
+    popoverContent.classList.add('popover-content');
+    popoverContent.innerText = this.id;
+    this.element.appendChild(popoverContent);
+
+    document.body.style.overflow = 'hidden';
+  }
+
+  close() {
+    this.destroyDimmer();
+
+    this.element.remove();
+    document.body.style.overflow = 'auto';
+  }
+
+  createDimmer() {
+    const dimmer = document.createElement('div');
+    dimmer.classList.add('dimmer');
+    dimmer.addEventListener('click', () => {
+      this.close();
+    });
+    document.body.appendChild(dimmer);
+  }
+
+  destroyDimmer() {
+    const dimmer = document.querySelector('.dimmer');
+    dimmer.remove();
+  }
+}
+
 class Card {
-  constructor(rootIdx, subIdx) {
-    this.rootIdx = rootIdx;
-    this.subIdx = subIdx;
+  constructor(index) {
+    this.index = index;
 
     this.currentElement = document.createElement('div');
     this.currentElement.className = 'card';
-
-    const cardId = `${rootIdx + 1}_${subIdx + 1}`;
-
-    this.currentElement.setAttribute('id', `card-${cardId}`);
-    this.currentElement.innerHTML = `Card ${cardId}`;
+    this.currentElement.setAttribute('id', `card-${this.index}`);
+    this.currentElement.innerText = this.index + 1;
 
     this.currentElement.addEventListener(
       'mouseover',
@@ -22,39 +63,49 @@ class Card {
       'mouseout',
       this.moveBack.bind(this)
     );
+    this.currentElement.addEventListener(
+      'click',
+      this.openPopOver.bind(this)
+    );
   }
 
   initElements() {
     this.aboveElement = document.getElementById(
-      `card-${this.rootIdx + 1}_${this.subIdx}`
+      `card-${this.index - 1}`
     );
     this.belowElement = document.getElementById(
-      `card-${this.rootIdx + 1}_${this.subIdx + 2}`
+      `card-${this.index + 1}`
     );
   }
 
+  animate(element, gap) {
+    if (element == null) {
+      return;
+    }
+    element.style.transform = `translateX(${gap}px)`;
+    element.style.transition = 'all 0.3s ease-out';
+  }
+
   moveRight() {
+    const BASE_GAP = 20;
     this.initElements();
 
-    if (this.aboveElement != null) {
-      this.aboveElement.style.transform = 'translateX(20px)';
-    }
-    if (this.belowElement != null) {
-      this.belowElement.style.transform = 'translateX(20px)';
-    }
-    this.currentElement.style.transform = 'translateX(40px)';
+    this.animate(this.aboveElement, BASE_GAP);
+    this.animate(this.belowElement, BASE_GAP);
+    this.animate(this.currentElement, BASE_GAP * 2);
   }
 
   moveBack() {
     this.initElements();
 
-    if (this.aboveElement != null) {
-      this.aboveElement.style.transform = 'translateX(0)';
-    }
-    if (this.belowElement != null) {
-      this.belowElement.style.transform = 'translateX(0)';
-    }
-    this.currentElement.style.transform = 'translateX(0)';
+    this.animate(this.aboveElement, 0);
+    this.animate(this.belowElement, 0);
+    this.animate(this.currentElement, 0);
+  }
+
+  openPopOver() {
+    const popOver = new PopOver(this.index + 1);
+    popOver.open();
   }
 }
 
@@ -65,18 +116,18 @@ class CardList {
     this.cards = [];
   }
 
-  async loadItems(rootIdx, loadNum) {
-    // Just for a delayed effect on scrolling
-    const data = await delay(500, Array(loadNum).fill(`${rootIdx}`));
-    data.forEach((item, subIdx) => {
-      this.cards.push(new Card(rootIdx, subIdx));
-      this.container.appendChild(this.cards[subIdx].currentElement);
+  async loadItems(loadNum) {
+    // Just for a delaying effect on scrolling
+    const data = await delay(500, Array(loadNum).fill(''));
+    data.forEach((item, index) => {
+      this.cards.push(new Card(index));
+      this.container.appendChild(this.cards[index].currentElement);
     });
     this.counter += 1;
   }
 
   bindObservation() {
-    const LOAD_AT_ONCE = 20;
+    const LOAD_AT_ONCE = 100;
     // Observe loadBtn
     const options = {
       // Use the whole screen as scroll area
@@ -89,7 +140,6 @@ class CardList {
     const intersectionObserver = new IntersectionObserver(
       async (entries) => {
         const totalCards = (this.counter + 1) * LOAD_AT_ONCE;
-        console.log({ totalCards, counter: this.counter });
 
         // If intersectionRatio is 0, the target is out of view
         // and we do not need to do anything.
@@ -97,7 +147,7 @@ class CardList {
         if (totalCards > 100) {
           return;
         }
-        await this.loadItems(this.counter, LOAD_AT_ONCE);
+        await this.loadItems(totalCards);
       },
       options
     );

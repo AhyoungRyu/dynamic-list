@@ -6,10 +6,43 @@ body {
   font-family: sans-serif;
 }
 
+.container {
+  position: relative;
+}
+
 .card {
-  width: 120px;
+  width: 150px;
   height: 20px;
   margin: 10px;
   padding: 10px;
   background-color: #ccc;
+}
+
+.popover {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.popover-content {
+  width: 400px;
+  height: 300px;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dimmer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
 }
