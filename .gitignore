@@ -1,0 +1,9 @@
+.parcel-cache/
+dist/*
+
+.yarn/**
+!.yarn/releases
+!.yarn/plugins
+.pnp.*
+
+.vscode/

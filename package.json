@@ -1,0 +1,16 @@
+{
+  "name": "dynamic-list",
+  "version": "1.0.0",
+  "description": "Dynamic list implementation written in Vanilla JS",
+  "scripts": {
+    "start": "parcel index.html --open",
+    "build": "parcel build index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ahyoung Ryu",
+  "license": "ISC",
+  "dependencies": {
+    "parcel": "^2.8.3"
+  },
+  "packageManager": "yarn@3.4.1"
+}
