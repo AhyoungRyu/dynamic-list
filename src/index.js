@@ -49,17 +49,13 @@ class PopOver {
 }
 
 class Card {
-  constructor(rootIndex, subIndex) {
-    this.rootIndex = rootIndex;
-    this.subIndex = subIndex;
+  constructor(index) {
+    this.index = index;
 
     this.currentElement = document.createElement('div');
     this.currentElement.className = 'card';
-    this.currentElement.setAttribute(
-      'id',
-      `card-${rootIndex}-${subIndex}`
-    );
-    this.currentElement.innerText = subIndex + 1;
+    this.currentElement.setAttribute('id', this.getCardId(index));
+    this.currentElement.innerText = index;
 
     this.currentElement.addEventListener(
       'mouseover',
@@ -75,16 +71,14 @@ class Card {
     );
   }
 
-  initElements() {
-    this.aboveElement = document.getElementById(
-      `card-${this.rootIndex}-${this.subIndex - 1}`
-    );
-    this.belowElement = document.getElementById(
-      `card-${this.rootIndex}-${this.subIndex + 1}`
-    );
+  getCardId(index) {
+    return `card-${index}`;
   }
 
   animateCard(element, gap) {
+    /**
+     * Just in case there's no above or below element for the first / last one
+     */
     if (element == null) {
       return;
     }
@@ -94,7 +88,12 @@ class Card {
 
   moveRight() {
     const BASE_GAP = 20;
-    this.initElements();
+    this.aboveElement = document.getElementById(
+      this.getCardId(this.index - 1)
+    );
+    this.belowElement = document.getElementById(
+      this.getCardId(this.index + 1)
+    );
 
     this.animateCard(this.aboveElement, BASE_GAP);
     this.animateCard(this.belowElement, BASE_GAP);
@@ -102,15 +101,13 @@ class Card {
   }
 
   moveBack() {
-    this.initElements();
-
     this.animateCard(this.aboveElement, 0);
     this.animateCard(this.belowElement, 0);
     this.animateCard(this.currentElement, 0);
   }
 
   handleClick() {
-    const popOver = new PopOver(this.subIndex + 1);
+    const popOver = new PopOver(this.index);
     popOver.open();
   }
 }
@@ -120,22 +117,22 @@ class CardList {
     this.container = document.getElementById('container');
     this.observed = document.getElementById('end-of-document');
     this.cards = [];
-    this.loopCounter = 1;
+    this.scrollCount = 1;
   }
 
-  async loadItems(loadNum, loopCounter) {
+  async loadItems(loadNum) {
     // Just for a delaying effect on scroll event
-    const data = await delay(500, Array(loadNum).fill(loopCounter));
+    const data = await delay(500, Array(loadNum).fill(''));
 
     data.forEach((item, index) => {
-      const newCard = new Card(loopCounter, index);
+      const newCard = new Card(this.cards.length + 1);
       this.cards.push(newCard);
       this.container.appendChild(newCard.currentElement);
     });
   }
 
   bindObservation() {
-    const LOAD_AT_ONCE = 20;
+    const LOAD_PER_ONCE = 20;
     const MAX_CARD_NUM = 100;
     // Observe loadBtn
     const options = {
@@ -148,15 +145,15 @@ class CardList {
     };
 
     const intersectionObserver = new IntersectionObserver(
-      async (entries) => {
-        if (this.loopCounter * LOAD_AT_ONCE > MAX_CARD_NUM) {
+      (entries) => {
+        if (this.scrollCount * LOAD_PER_ONCE > MAX_CARD_NUM) {
           return;
         }
 
-        entries.forEach(async (entry) => {
-          if (entry.intersectionRatio > 0) {
-            await this.loadItems(LOAD_AT_ONCE, this.loopCounter);
-            this.loopCounter += 1;
+        entries.forEach(async ({ intersectionRatio }) => {
+          if (intersectionRatio > 0) {
+            await this.loadItems(LOAD_PER_ONCE);
+            this.scrollCount += 1;
           }
         });
       },
