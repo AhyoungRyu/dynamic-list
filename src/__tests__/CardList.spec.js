@@ -26,6 +26,7 @@ describe('CardList', () => {
         // should be scrolled more than once at least
         expect(cardList.scrollCount).not.toBe(0);
         expect(cardList.loadItems).toBeCalled();
+        expect(cardList.length).toBe(100);
       });
 
       // call the observe method with the mock element
