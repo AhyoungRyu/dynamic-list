@@ -1,36 +1,64 @@
 import '../style.css';
 
-import { PopOver } from './Popover';
+import { Popup } from './Popup';
+import { getCardId } from '../util/card';
 
+export const classNames = {
+  container: 'card',
+  content: 'card-content',
+};
 export class Card {
   constructor(index) {
     this.index = index;
 
-    this.currentElement = document.createElement('div');
-    this.currentElement.className = 'card';
-    this.currentElement.setAttribute('id', this.getCardId(index));
-    this.currentElement.innerText = index;
+    // Define separate handlers to enable to make removeEventListener work
+    // since bind(this) will create a new function
+    this.moveRightHandler = this.moveRight.bind(this);
+    this.moveBackHandler = this.moveBack.bind(this);
+    this.clickHandler = this.handleClick.bind(this);
 
-    this.setUpEvents();
+    this.setUpElement();
   }
 
-  setUpEvents() {
+  setUpElement() {
+    this.currentElement = document.createElement('div');
+    this.currentElement.className = classNames.container;
+    this.currentElement.setAttribute('id', getCardId(this.index));
+
+    const cardContent = document.createElement('div');
+    cardContent.className = classNames.content;
+    cardContent.innerText = this.index;
+    this.currentElement.appendChild(cardContent);
+
+    this.setUpEvents(this.currentElement);
+  }
+
+  setUpEvents(element) {
+    this.currentElement = element;
     this.currentElement.addEventListener(
       'mouseover',
-      this.moveRight.bind(this)
+      this.moveRightHandler
     );
     this.currentElement.addEventListener(
       'mouseout',
-      this.moveBack.bind(this)
+      this.moveBackHandler
     );
-    this.currentElement.addEventListener(
-      'click',
-      this.handleClick.bind(this)
-    );
+    this.currentElement.addEventListener('click', this.clickHandler);
   }
 
-  getCardId(index) {
-    return `card-${index}`;
+  removeEvents() {
+    this.currentElement.removeEventListener(
+      'mouseover',
+      this.moveRightHandler
+    );
+    this.currentElement.removeEventListener(
+      'mouseout',
+      this.moveBackHandler
+    );
+    this.currentElement.removeEventListener(
+      'click',
+      this.clickHandler
+    );
   }
 
   moveWithAnimation(element, gap) {
@@ -38,18 +66,22 @@ export class Card {
     if (element == null) {
       return;
     }
-    element.style.transform = `translateX(${gap}px)`;
-    element.style.transition = 'all 0.3s ease-out';
+    if (gap === 0) {
+      element.style = null;
+    } else {
+      element.style.transform = `translateX(${gap}px)`;
+      element.style.transition = 'all 0.3s ease-out';
+    }
   }
 
   moveRight() {
     const BASE_GAP = 20;
 
     this.aboveElement = document.getElementById(
-      this.getCardId(this.index - 1)
+      getCardId(this.index - 1)
     );
     this.belowElement = document.getElementById(
-      this.getCardId(this.index + 1)
+      getCardId(this.index + 1)
     );
 
     this.moveWithAnimation(this.aboveElement, BASE_GAP);
@@ -64,7 +96,12 @@ export class Card {
   }
 
   handleClick() {
-    const popOver = new PopOver(this.index);
-    popOver.open();
+    // 1. Put the card back to the origin position first
+    this.moveBack();
+    // 2. Disable the card's mouse & click events while the popup is opened
+    this.removeEvents();
+    // 3. Open a popup using the target card element
+    const popup = new Popup(this.index);
+    popup.open();
   }
 }

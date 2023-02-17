@@ -15,7 +15,6 @@ export class CardList {
   }
 
   /**
-   *
    * @param loadNum: # of items wants to load at a time by the scroll event
    */
   loadItems(loadNum) {

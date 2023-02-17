@@ -14,14 +14,15 @@ body {
   background-color: #ccc;
 }
 
-.popover {
+.popup {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  z-index: 1;
 }
 
-.popover-content {
+.popup-content {
   width: 400px;
   height: 300px;
   padding: 20px;
