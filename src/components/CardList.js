@@ -2,14 +2,22 @@ import '../style.css';
 
 import { Card } from './Card';
 
+export const elementIds = {
+  container: 'container',
+  observee: 'end-of-container',
+};
 export class CardList {
   constructor() {
-    this.container = document.getElementById('container');
-    this.observee = document.getElementById('end-of-document');
+    this.container = document.getElementById(elementIds.container);
+    this.observee = document.getElementById(elementIds.observee);
     this.cards = [];
-    this.scrollCount = 1;
+    this.scrollCount = 0;
   }
 
+  /**
+   *
+   * @param loadNum: # of items wants to load at a time by the scroll event
+   */
   loadItems(loadNum) {
     Array(loadNum)
       .fill('')
@@ -37,7 +45,8 @@ export class CardList {
 
     const intersectionObserver = new IntersectionObserver(
       (entries) => {
-        if (this.scrollCount * LOAD_PER_ONCE > MAX_CARD_NUM) {
+        // Do not draw more than 100 cards
+        if ((this.scrollCount + 1) * LOAD_PER_ONCE > MAX_CARD_NUM) {
           return;
         }
 

@@ -5,12 +5,25 @@
   "scripts": {
     "start": "parcel index.html --open",
     "build": "parcel build index.html",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "yarn node --experimental-vm-modules $(yarn bin jest)"
   },
   "author": "Ahyoung Ryu",
   "license": "ISC",
   "dependencies": {
     "parcel": "^2.8.3"
   },
-  "packageManager": "yarn@3.4.1"
+  "packageManager": "yarn@3.4.1",
+  "devDependencies": {
+    "jest": "^29.4.3",
+    "jest-environment-jsdom": "^29.4.3",
+    "jest-mock": "^29.4.3"
+  },
+  "type": "module",
+  "jest": {
+    "verbose": false,
+    "moduleNameMapper": {
+      "\\.(css|less)$": "<rootDir>/src/mockStyle.js"
+    },
+    "testEnvironment": "jsdom"
+  }
 }

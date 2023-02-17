@@ -11,6 +11,10 @@ export class Card {
     this.currentElement.setAttribute('id', this.getCardId(index));
     this.currentElement.innerText = index;
 
+    this.setUpEvents();
+  }
+
+  setUpEvents() {
     this.currentElement.addEventListener(
       'mouseover',
       this.moveRight.bind(this)
@@ -29,7 +33,7 @@ export class Card {
     return `card-${index}`;
   }
 
-  animateCard(element, gap) {
+  moveWithAnimation(element, gap) {
     // Just in case there's no above or below element for the first / last one
     if (element == null) {
       return;
@@ -48,15 +52,15 @@ export class Card {
       this.getCardId(this.index + 1)
     );
 
-    this.animateCard(this.aboveElement, BASE_GAP);
-    this.animateCard(this.belowElement, BASE_GAP);
-    this.animateCard(this.currentElement, BASE_GAP * 2);
+    this.moveWithAnimation(this.aboveElement, BASE_GAP);
+    this.moveWithAnimation(this.belowElement, BASE_GAP);
+    this.moveWithAnimation(this.currentElement, BASE_GAP * 2);
   }
 
   moveBack() {
-    this.animateCard(this.aboveElement, 0);
-    this.animateCard(this.belowElement, 0);
-    this.animateCard(this.currentElement, 0);
+    this.moveWithAnimation(this.aboveElement, 0);
+    this.moveWithAnimation(this.belowElement, 0);
+    this.moveWithAnimation(this.currentElement, 0);
   }
 
   handleClick() {
