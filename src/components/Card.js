@@ -37,11 +37,11 @@ export class Card {
     this.currentElement = element;
     this.currentElement.addEventListener(
       'mouseover',
-      this.moveRightHandler
+      this.moveRightHandler,
     );
     this.currentElement.addEventListener(
       'mouseout',
-      this.moveBackHandler
+      this.moveBackHandler,
     );
     this.currentElement.addEventListener('click', this.clickHandler);
   }
@@ -49,15 +49,15 @@ export class Card {
   removeEvents() {
     this.currentElement.removeEventListener(
       'mouseover',
-      this.moveRightHandler
+      this.moveRightHandler,
     );
     this.currentElement.removeEventListener(
       'mouseout',
-      this.moveBackHandler
+      this.moveBackHandler,
     );
     this.currentElement.removeEventListener(
       'click',
-      this.clickHandler
+      this.clickHandler,
     );
   }
 
@@ -78,10 +78,10 @@ export class Card {
     const BASE_GAP = 20;
 
     this.aboveElement = document.getElementById(
-      getCardId(this.index - 1)
+      getCardId(this.index - 1),
     );
     this.belowElement = document.getElementById(
-      getCardId(this.index + 1)
+      getCardId(this.index + 1),
     );
 
     this.moveWithAnimation(this.aboveElement, BASE_GAP);

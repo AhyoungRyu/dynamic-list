@@ -3,14 +3,14 @@ import { getCardId } from '../util/card';
 import {
   Popup,
   classNames as popupClassNames,
+  classNames as cardClassNames,
 } from '../components/Popup';
-import { classNames as cardClassNames } from '../components/Popup';
 
 const MOCK_INDEX = 2;
 
 describe('Popup', () => {
   let popup = null;
-  let events = {};
+  const events = {};
 
   beforeAll(() => {
     const cardElement = document.createElement('div');
@@ -42,7 +42,7 @@ describe('Popup', () => {
     it('should create a dimmer element', () => {
       popup.open();
       const dimmers = document.getElementsByClassName(
-        popupClassNames.dimmer
+        popupClassNames.dimmer,
       );
       expect(dimmers.length).not.toBe(0);
     });
@@ -54,7 +54,7 @@ describe('Popup', () => {
 
       popup.open();
       const dimmers = document.getElementsByClassName(
-        popupClassNames.dimmer
+        popupClassNames.dimmer,
       );
       dimmers[0].addEventListener = jest.fn((event, callback) => {
         events[event] = callback;
@@ -77,13 +77,13 @@ describe('Popup', () => {
 
       // shouldn't be able to find the popup element
       const popupElements = document.getElementsByClassName(
-        popupClassNames.container
+        popupClassNames.container,
       );
       expect(popupElements.length).toBe(0);
 
       // but the card element should be
       const cardElement = document.getElementById(
-        getCardId(MOCK_INDEX)
+        getCardId(MOCK_INDEX),
       );
       expect(cardElement).not.toBe(null);
     });

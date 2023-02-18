@@ -6,7 +6,7 @@ const MOCK_INDEX = 2;
 
 describe('Card', () => {
   let card = null;
-  let events = {};
+  const events = {};
 
   beforeAll(() => {
     card = new Card(MOCK_INDEX);
@@ -30,7 +30,7 @@ describe('Card', () => {
     card.currentElement.addEventListener = jest.fn(
       (event, callback) => {
         events[event] = callback;
-      }
+      },
     );
   });
 

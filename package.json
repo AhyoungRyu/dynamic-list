@@ -5,7 +5,9 @@
   "scripts": {
     "start": "parcel index.html --open",
     "build": "parcel build index.html",
-    "test": "yarn node --experimental-vm-modules $(yarn bin jest)"
+    "test": "yarn node --experimental-vm-modules $(yarn bin jest)",
+    "lint": "eslint --no-inline-config --ext .js src",
+    "lint:fix": "yarn run lint --fix"
   },
   "author": "Ahyoung Ryu",
   "license": "ISC",
@@ -14,6 +16,9 @@
   },
   "packageManager": "yarn@3.4.1",
   "devDependencies": {
+    "eslint": "^7.32.0 || ^8.2.0",
+    "eslint-config-semistandard": "latest",
+    "eslint-plugin-import": "^2.25.2",
     "jest": "^29.4.3",
     "jest-environment-jsdom": "^29.4.3",
     "jest-mock": "^29.4.3"
