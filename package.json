@@ -11,9 +11,6 @@
   },
   "author": "Ahyoung Ryu",
   "license": "ISC",
-  "dependencies": {
-    "parcel": "^2.8.3"
-  },
   "packageManager": "yarn@3.4.1",
   "devDependencies": {
     "eslint": "^7.32.0 || ^8.2.0",
@@ -21,7 +18,8 @@
     "eslint-plugin-import": "^2.25.2",
     "jest": "^29.4.3",
     "jest-environment-jsdom": "^29.4.3",
-    "jest-mock": "^29.4.3"
+    "jest-mock": "^29.4.3",
+    "parcel": "^2.8.3"
   },
   "type": "module",
   "jest": {

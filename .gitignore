@@ -1,9 +1,12 @@
+# Parcel related
 .parcel-cache/
 dist/*
 
+# yarn related
 .yarn/**
 !.yarn/releases
 !.yarn/plugins
 .pnp.*
 
+# IDE related
 .vscode/
